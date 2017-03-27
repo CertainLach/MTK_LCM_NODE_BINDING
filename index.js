@@ -50,7 +50,7 @@ module.exports = {
     },
     fillArea(x1, y1, x2, y2, color) {
         start();
-        if (x1 < x2 || y1 < y2)
+        if (x1 > x2 || y1 > y2)
             throw new Error('Invalid coords!');
         binding.fill(x1, y1, x2, y2, color);
     },
@@ -64,7 +64,7 @@ module.exports = {
     },
     fillAreaRGB(x1, y1, x2, y2, r, g, b) {
         start();
-        if (x1 < x2 || y1 < y2)
+        if (x1 > x2 || y1 > y2)
             throw new Error('Invalid coords!');
         binding.fill(x1, y1, x2, y2, convertRGB(r, g, b));
     },
@@ -90,6 +90,12 @@ module.exports = {
     getWidth() {
         start();
         return width;
+    },
+    sleep(){
+        binding.sleepWake(0x01);  
+    },
+    wake(){
+        binding.sleepWake(0x02);  
     },
     close() {
         if (binding.close() != 0)

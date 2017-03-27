@@ -11,9 +11,8 @@ This is a node.js library to interract with china lcm modules
 # Example:
 ```js
 const lcm=require('/folder/with/index.js')
-lcm.fillScreenRGB(0,0,0);
+lcm.fillScreenRGB(0xBF,0x43,0x42);
 lcm.setRotation(270);
-lcm.fillAreaRGB(0,0,lcm.getWidth()/2,lcm.getHeight(),225,0,255); //Fill half of screen with purple
 ```
 
 # API:

@@ -81,7 +81,7 @@ uint8_t lowLevelOpen(void) {
 	bcm2835_spi_begin();
 	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
 	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_8);
 	bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);
 	bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS1, LOW);
 	return 0;
@@ -107,6 +107,12 @@ void lowLevelInit(void) {
 	push_table(lcm_initialization_setting, sizeof(lcm_initialization_setting) / sizeof(struct LCM_setting_table), 0);
 	lcd_h = LCD_HEIGHT;
 	lcd_w = LCD_WIDTH;
+}
+void lowLevelSleep(void) {
+	push_table(lcm_deep_sleep_mode_in_setting, sizeof(lcm_deep_sleep_mode_in_setting) / sizeof(struct LCM_setting_table), 0);
+}
+void lowLevelWake(void) {
+	push_table(lcm_sleep_out_setting, sizeof(lcm_sleep_out_setting) / sizeof(struct LCM_setting_table), 0);
 }
 void lowLevelColor(uint32_t col) {
 	uint8_t b1[3];
@@ -146,6 +152,14 @@ void lowLevelFill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint32_t col) 
 		lowLevelColor(col);
 }
 
+void sleepWake(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+	uint8_t action = info[0]->NumberValue();
+	if(action==0x01)
+		lowLevelSleep();
+	else if(action==0x02)
+		lowLevelWake();
+	info.GetReturnValue().Set(Nan::Undefined());
+}
 void open(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	v8::Local<v8::Number> num = Nan::New(lowLevelOpen());
 	info.GetReturnValue().Set(num);
@@ -194,6 +208,7 @@ void Init(v8::Local<v8::Object> exports) {
 	exports->Set(Nan::New("setRotation").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(setRotation)->GetFunction());
 	exports->Set(Nan::New("fill").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(fill)->GetFunction());
 	exports->Set(Nan::New("getSize").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(getSize)->GetFunction());
+	exports->Set(Nan::New("sleepWake").ToLocalChecked(), Nan::New<v8::FunctionTemplate>(sleepWake)->GetFunction());
 }
 
 NODE_MODULE(module, Init);

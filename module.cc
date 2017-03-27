@@ -121,13 +121,10 @@ void lowLevelColor(uint32_t col) {
 void lowLevelRotate(uint8_t m) {
 	unsigned char para_list[64]={lcd_rotations[m]};
 	dsi_set_cmdq_V2(0x36,1,para_list,0);
-	//printf("%i",m);
 	if (m&1) {
-		//printf("ROT1\n");
 		lcd_h = LCD_WIDTH;
 		lcd_w = LCD_HEIGHT;
 	} else {
-		//printf("ROT2\n");
 		lcd_h = LCD_HEIGHT;
 		lcd_w = LCD_WIDTH;
 	}
@@ -142,7 +139,8 @@ void lowLevelSetFrame(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
 }
 void lowLevelFill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint32_t col) {
 	lowLevelSetFrame(x,y,w,h);
-	for(int i=0;i<h*w;i++){lowLevelColor(col);}
+	for(int i=0;i<h*w;i++)
+		lowLevelColor(col);
 }
 
 void open(const Nan::FunctionCallbackInfo<v8::Value>& info) {
@@ -150,39 +148,39 @@ void open(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	info.GetReturnValue().Set(num);
 }
 void init(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  lowLevelInit();
-  info.GetReturnValue().Set(Nan::Undefined());
+	lowLevelInit();
+	info.GetReturnValue().Set(Nan::Undefined());
 }
 void close(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 	v8::Local<v8::Number> num = Nan::New(lowLevelClose());
 	info.GetReturnValue().Set(num);
 }
 void setRotation(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  uint8_t rotation = info[0]->NumberValue();
-  lowLevelRotate(rotation);
-  info.GetReturnValue().Set(Nan::Undefined());
+	uint8_t rotation = info[0]->NumberValue();
+	lowLevelRotate(rotation);
+	info.GetReturnValue().Set(Nan::Undefined());
 }
 void fill(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  uint16_t fx=0;
-  uint16_t tx=lcd_w;
-  uint16_t fy=0;
-  uint16_t ty=lcd_h;
-  uint32_t color=0xff00ff; // Purple
-  if(info.Length() == 5){
-	fx=info[0]->NumberValue();
-	fy=info[1]->NumberValue();
-	tx=info[2]->NumberValue();
-	ty=info[3]->NumberValue();
-	color=info[4]->NumberValue();
-  }else{
-	color=info[0]->NumberValue();
-  }
-  lowLevelFill(fx,fy,tx,ty,color);
-  info.GetReturnValue().Set(Nan::Undefined());
+	uint16_t fx=0;
+	uint16_t tx=lcd_w;
+	uint16_t fy=0;
+	uint16_t ty=lcd_h;
+	uint32_t color=0xff00ff; // Purple
+	if(info.Length() == 5){
+		fx=info[0]->NumberValue();
+		fy=info[1]->NumberValue();
+		tx=info[2]->NumberValue();
+		ty=info[3]->NumberValue();
+		color=info[4]->NumberValue();
+	}else{
+		color=info[0]->NumberValue();
+	}
+	lowLevelFill(fx,fy,tx,ty,color);
+	info.GetReturnValue().Set(Nan::Undefined());
 }
 void getSize(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  v8::Local<v8::Number> num = Nan::New(lcd_w*1000000+lcd_h);
-  info.GetReturnValue().Set(num);
+	v8::Local<v8::Number> num = Nan::New(lcd_w*1000000+lcd_h);
+	info.GetReturnValue().Set(num);
 }
 
 void Init(v8::Local<v8::Object> exports) {

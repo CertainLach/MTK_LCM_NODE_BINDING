@@ -39,7 +39,7 @@ static struct LCM_setting_table lcm_initialization_setting[] = {
 	{0x36,1,{0x2a}}, // Same as setRotation(0);
 	{0x3a,1,{0x66}}, // RGB666 18bit
 
-#if 1 //Like china's govnocoders
+#if 1 // Comment if screen has noize
 	{0x2a,4,{0x00,0x00,0x01,0x3f}},
 	{0x2b,4,{0x00,0x00,0x01,0xe0}},
 #endif
